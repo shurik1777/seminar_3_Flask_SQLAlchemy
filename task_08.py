@@ -22,6 +22,19 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 db = SQLAlchemy(app)
 
 
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_template('Task8/index.html',
+                           title='Стартовая страница')
+
+
+@app.route('/data')
+def data():
+    return render_template('Task8/data.html',
+                           title='Информация')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
