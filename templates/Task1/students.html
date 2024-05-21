@@ -1,0 +1,25 @@
+{% extends 'Task1/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+    <body>
+    <h1>Вот наши студенты</h1>
+    <div class="row">
+        {% for st in student %}
+            <p class="col-12 col-md-6">
+                Имя студента: {{ st.name }},
+                Фамилия: {{ st.last_name }}<br>
+                Возраст: {{ st.age }}<br>
+                Пол: {{ st.gender }}<br>
+                Группа: {{ st.group }}<br>
+                Почта электронная: {{ st.email }}<br>
+                ID Факультета: {{ st.faculty.faculty_name }}<br>
+                Оценка успеваемости: {{ st.grades }}<br>
+            </p>
+        {% endfor %}
+    </div>
+    </body>
+{% endblock %}

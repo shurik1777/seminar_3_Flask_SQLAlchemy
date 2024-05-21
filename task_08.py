@@ -27,6 +27,7 @@ from model.models import User
 
 db.create_all()
 
+
 @app.route('/', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
