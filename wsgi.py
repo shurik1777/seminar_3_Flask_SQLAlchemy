@@ -1,5 +1,5 @@
-from task_01 import app
-# from task_02 import app
+# from task_01 import app
+from task_02 import app
 # from task_03 import app
 # from task_04 import app
 # from task_08 import app

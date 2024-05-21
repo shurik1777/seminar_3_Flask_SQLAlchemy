@@ -1,0 +1,16 @@
+{% extends 'Task2/base.html' %}
+
+{% block title %}
+    {{ super() }} - {{ title }}
+{% endblock %}
+
+{% block content %}
+    <body>
+    <h1>Книги в библиотеке</h1>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }} - {{ book.author.first_name }} {{ book.author.last_name }}</li>
+        {% endfor %}
+    </ul>
+    </body>
+{% endblock %}
