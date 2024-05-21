@@ -7,59 +7,45 @@
 данных, а пароль должен быть зашифрован.
 """
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
-from dotenv import load_dotenv
-from flask_sqlalchemy import SQLAlchemy
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, redirect, url_for
+from flask_wtf import CSRFProtect
+
+from model.forms import RegistrationForm
+from dotenv import load_dotenv
+
+load_dotenv()
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+db = SQLAlchemy(app)
+csrf = CSRFProtect(app)
 
 from model.models import User
 
-app = Flask(__name__)
-load_dotenv()  # Автоматически загружает переменные окружения из .env.
+db.create_all()
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-db = SQLAlchemy(app)
-
-
-@app.route('/')
-@app.route('/index')
-def index():
-    return render_template('Task8/index.html',
-                           title='Стартовая страница')
-
-
-@app.route('/data')
-def data():
-    return render_template('Task8/data.html',
-                           title='Информация')
-
-
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        name = request.form['name']
-        surname = request.form['surname']
-        email = request.form['email']
-        password = request.form['password']
-
-        if not name or not surname or not email or not password:
-            flash('Все поля должны быть заполнены', 'error')
-            return redirect(url_for('register'))
-
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('Email уже зарегистрирован', 'error')
-            return redirect(url_for('register'))
-
-        user = User(name=name, surname=surname, email=email)
-        user.set_password(password)
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = form.password.data  # Placeholder for password hashing
+        user = User(first_name=form.first_name.data, last_name=form.last_name.data, email=form.email.data,
+                    password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        flash('Регистрация прошла успешно', 'success')
-        return redirect(url_for('login'))
-    return render_template('Task8/register.html')
+        # db.create_all()
+        return redirect(url_for('success'))
+    return render_template('Task8/register.html', form=form)
+
+
+@app.route('/success')
+def success():
+    return "Registration successful! 🎉"
 
 
 if __name__ == '__main__':
+    # db.create_all()
     app.run(debug=True)
