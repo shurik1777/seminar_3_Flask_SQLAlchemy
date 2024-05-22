@@ -7,10 +7,14 @@
 {% block content %}
     <body>
     <h1>Книги в библиотеке</h1>
-    <ul>
-        {% for book in books %}
-            <li>{{ book.title }} - {{ book.author.first_name }} {{ book.author.last_name }}</li>
-        {% endfor %}
-    </ul>
+    {% for book in books %}
+        <div>
+            <h2>{{ book.title }}</h2>
+            <p>Год издания: {{ book.year }}</p>
+            <p>Количество экземпляров: {{ book.copies }}</p>
+            <p>Автор: {{ book.author.first_name }} {{ book.author.last_name }}</p>
+        </div>
+    {% endfor %}
     </body>
 {% endblock %}
+

@@ -6,8 +6,8 @@
 initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <title>{% block title %}
-            Cайт визитка
-        {% endblock %}
+
+    {% endblock %}
     </title>
 </head>
 <body>
@@ -17,6 +17,8 @@ initial-scale=1, shrink-to-fit=no">
                                 class="nav-link">Основная</a></li>
         <li class="nav-item"><a href="{{ url_for('data') }}"
                                 class="nav-link">Данные</a></li>
+        <li class="nav-item"><a href="{{ url_for('authors_page') }}"
+                                class="nav-link">Авторы книг</a></li>
     </ul>
 
     {% block content %}

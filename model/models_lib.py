@@ -7,6 +7,7 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+    books = db.relationship("Book", backref="author", lazy=True)
 
 
 class Book(db.Model):
@@ -14,5 +15,4 @@ class Book(db.Model):
     title = db.Column(db.String(100), nullable=False)
     year = db.Column(db.Integer)
     copies = db.Column(db.Integer)
-    author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
-    author = db.relationship('Author', backref='books')
+    author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
