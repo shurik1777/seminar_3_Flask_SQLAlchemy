@@ -1,52 +1,74 @@
 """
-Задание №8.
+Задание
 Создать форму для регистрации пользователей на сайте.
-Форма должна содержать поля "Имя", "Фамилия", "Email",
-"Пароль" и кнопку "Зарегистрироваться".
-При отправке формы данные должны сохраняться в базе
-данных, а пароль должен быть зашифрован.
+Форма должна содержать поля "Имя", "Фамилия", "Email", "Пароль"
+и кнопку "Зарегистрироваться".
+При отправке формы данные должны сохраняться в базе данных,
+а пароль должен быть зашифрован.
 """
-import os
-
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask import render_template, redirect, url_for
-from flask_wtf import CSRFProtect
+from flask import render_template, request, redirect, url_for, flash
 
+from model.model_reg import db, User
 from model.forms import RegistrationForm
-from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect
+from werkzeug.security import generate_password_hash, check_password_hash
 
-load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-db = SQLAlchemy(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
+db.init_app(app)
+
+app.config["SECRET_KEY"] = (
+    "aff4028c6c00ebgjfjb488eb83149bb1af1c427c85715c022b9"
+)
 csrf = CSRFProtect(app)
 
-from model.models import User
 
-db.create_all()
+@app.cli.command('db-init')
+def init_db():
+    db.create_all()
 
 
-@app.route('/', methods=['GET', 'POST'])
-def register():
+@app.route('/')
+@app.route('/index/')
+def index():
+    return render_template('Task8/index.html', title='Главная')
+
+
+@app.route('/data/')
+def data():
+    return render_template('Task8/data.html', title='О мне')
+
+
+@app.route("/registration/", methods=["GET", "POST"])
+def registration():
     form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = form.password.data  # Placeholder for password hashing
-        user = User(first_name=form.first_name.data, last_name=form.last_name.data, email=form.email.data,
-                    password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        # db.create_all()
-        return redirect(url_for('success'))
-    return render_template('Task8/register.html', form=form)
+    context = {"title": "Страница регистрации", "form": form}
+    if request.method == "POST" and form.validate():
+        with app.app_context():
+            first_name = form.first_name.data
+            last_name = form.last_name.data
+            email = form.email.data
 
+            secret_password = generate_password_hash(form.password.data)
 
-@app.route('/success')
-def success():
-    return "Registration successful! 🎉"
+            user = User.query.filter_by(email=email).first()
+            if user:
+                flash(
+                    "Пользователь с такой электронной почтой уже зарегистрирован!", "danger"
+                )
+                return redirect(url_for("registration"))
+
+            new_user = User(first_name=first_name, last_name=last_name, email=email, password=secret_password)
+            db.session.add(new_user)
+            db.session.commit()
+
+        flash(f"Здравствуйте {first_name} {last_name}!Вы успешно зарегистрированы!!!", "success")
+        return redirect(url_for("index"))
+
+    return render_template("Task8/register.html", **context)
 
 
 if __name__ == '__main__':
-    # db.create_all()
     app.run(debug=True)

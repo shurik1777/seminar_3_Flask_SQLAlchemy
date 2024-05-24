@@ -1,18 +1,20 @@
 {% extends 'Task8/base.html' %}
 
 {% block title %}
-{{ super() }} - {{ title }}
+    {{ super() }} - {{ title }}
 {% endblock %}
 
 {% block content %}
-<body>
-<div class="container-fluid">
-    <ul class="nav nav-pills justify-content-left align-items-end lead fw-bold">
-        <li class="nav-item">
-            <a href="/register" class="nav-link">На страницу авторизации</a>
-        </li>
-    </ul>
+    <div class='contaner'>
+    <h1> Главная страница </h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if  messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} text-center">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+        <div class="text-center">
+        <img src="{{ url_for('static', filename='image/success.jpg') }}" class="img-thumbnail rounded " alt="Спасибо!">
     </div>
-</body>
-
 {% endblock %}

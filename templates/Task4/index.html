@@ -1,0 +1,14 @@
+{% extends 'Task4/base.html' %}
+
+{% block title %}
+    {{ super() }} - {{ title }}
+{% endblock %}
+
+{% block content %}
+    <body>
+    <h1>Приветствуем вас!!!</h1>
+    <a href="{{ url_for('register') }}">Перейти на страницу регистрации</a>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    </body>
+{% endblock %}
+
